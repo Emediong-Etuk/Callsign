@@ -8,7 +8,7 @@ Callsign is a payment firewall against deepfake impersonation scams, built on NE
 
 **Hosted demo:** _not deployed yet_ — see [Status](#status). **Judges with no keys:** run [`npm run verify:all`](#for-judges-verify-in-5-minutes-no-keys-needed).
 
-![The guided demo after the deepfake scenario: held, rejected, receiver flagged, retry refused (local sandbox rehearsal)](docs/img/demo-scam.png)
+![The guided demo on NEAR testnet after the deepfake scenario: held, rejected, receiver flagged, retry refused](docs/img/demo-scam.png)
 
 ---
 
@@ -124,10 +124,13 @@ You need `cargo-near` and `near-cli-rs` (`cargo install --locked cargo-near near
 
    ```
    [2/6] Red-flag check: HIGH  (rules only — NEAR AI disabled (no NEARAI_API_KEY))
-   [3/6] Tolu requested 25,000 tUSD → fastpay-4edea5.testnet
-         HELD — waiting for Ada Okafor (ceo.…) · expires 17:44:48 WAT
+         urgency · secrecy · authority_pressure · changed_payment_details · new_payee · amount_anomaly
+   [3/6] Tolu requested 25,000 tUSD → fastpay-606671.testnet
+         HELD — waiting for Ada Okafor (ceo.callsign-fdym.testnet) · expires 18:31:07 WAT
+         tx: https://testnet.nearblocks.io/txns/7Bq8MJx8BTYpvHLvNGKfZHUpfvmBUf3YQdzMviHC9UUh
    [4/6] Ada: "I didn't send this" → BLOCKED & REPORTED · receiver flagged on-chain
-   [5/6] Retry to fastpay-4edea5.testnet → rejected: ERR_RECEIVER_FLAGGED ✅
+         tx: https://testnet.nearblocks.io/txns/7vdLGFiE4oGgn4gpBYbRM4xKJZ5mZ1YmRVZUvYgyZea5
+   [5/6] Retry to fastpay-606671.testnet → rejected: ERR_RECEIVER_FLAGGED ✅
    [6/6] Vault available: 100,000 tUSD (unchanged) ✅
    ```
 
@@ -137,8 +140,11 @@ You need `cargo-near` and `near-cli-rs` (`cargo install --locked cargo-near near
 
    ```
    [2/4] PAID INSTANTLY (known payee, under limit) → vendor +200 tUSD
-   [3/4] Tolu requested 2,000 tUSD → Kestrel Logistics (supplier.…): HELD (new payee)
+         tx: https://testnet.nearblocks.io/txns/9768DPvZFGd2DrUPSzk6fyeh1EHr3CiMhLLPUGk3R6v5
+   [3/4] Tolu requested 2,000 tUSD → Kestrel Logistics (supplier.callsign-fdym.testnet): HELD (new payee)
+         tx: https://testnet.nearblocks.io/txns/Feym5ALxkuBCybaRS67pB4g2nANT8VfMsz8N4qg315V7
    [4/4] Ada confirmed from her own account (1 yoctoNEAR) → PAID · supplier +2,000 tUSD
+         tx: https://testnet.nearblocks.io/txns/5aEiNtXQz4HiCVdqy3bHTi9pkVNkKxZ6g7iBQC55oxtR
    ```
 
    ```bash
@@ -162,13 +168,13 @@ You need `cargo-near` and `near-cli-rs` (`cargo install --locked cargo-near near
 
    Also: `npm run demo:expire` (waits out a hold; nothing moves) and `npm run demo:reset` (sweeps expired holds, recycles demo payouts back into the vault, tops up if low).
 
-   The excerpts above are from a full rehearsal against a local NEAR sandbox node (same scripts, `NEAR_NETWORK=sandbox`); testnet output will be added after deployment.
+   The excerpts above are real NEAR testnet output from 2026-11-08 (the attack run's set-up request: [`A6YQw7…`](https://testnet.nearblocks.io/txns/A6YQw7eD9uvNeB76DVNbQPh28o9NYPDWECAzNTHXPTus)). Protocol-level refusals never reach the chain, so they have no transaction.
 
 4. Optional AI: set `NEARAI_API_KEY` (server-only) to add the NEAR AI Cloud check, then `npm run capture:fixture` to save a real signed response for offline verification.
 
 5. Web app: `npm run dev`, then open <http://localhost:3000>.
 
-**About Tolu's function-call key** (security track note): it is scoped to one contract (the vault) and two methods, carries no deposit, and has a gas allowance (default 2 NEAR, ~100 requests at 100 Tgas each). It cannot transfer NEAR or tokens, call any other contract, add keys, or confirm. Caveats from [NEAR's access-keys docs](https://docs.near.org/protocol/accounts-contracts/access-keys): when the allowance runs out the key stops working (sign in again for a fresh one); an account that held *only* function-call keys could lock itself out — Tolu's account keeps a full-access key that stays offline.
+**About Tolu's function-call key** (security track note): it is scoped to one contract (the vault) and two methods, carries no deposit, and has a gas allowance (default 2 NEAR; on testnet four requests used about 0.0023 NEAR of it). It cannot transfer NEAR or tokens, call any other contract, add keys, or confirm. Caveats from [NEAR's access-keys docs](https://docs.near.org/protocol/accounts-contracts/access-keys): when the allowance runs out the key stops working (sign in again for a fresh one); an account that held *only* function-call keys could lock itself out — Tolu's account keeps a full-access key that stays offline.
 
 ## Guarantees → tests
 
@@ -241,7 +247,7 @@ If the AI call fails, times out (15 s) or returns invalid JSON, the risk is rais
 | Thing | Real or simulated |
 |---|---|
 | Vault and token contracts, their policy and tests | Real Rust contracts; tests run on a real local NEAR node |
-| Testnet transactions in the demo and scripts | Real NEAR testnet transactions (once deployed) |
+| Testnet transactions in the demo and scripts | Real NEAR testnet transactions |
 | NEAR AI checks | Real NEAR AI Cloud calls when `NEARAI_API_KEY` is set; otherwise rules only, labelled as such |
 | tUSD | A mock token with no value, not styled after any real stablecoin |
 | Acme Ltd, Ada, Chidi, Tolu, Harbor Office Supplies, Kestrel Logistics | Fictional |
@@ -260,7 +266,19 @@ Full analysis: [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md). Key limitations:
 
 ## Deployed contracts
 
-Not deployed yet (see [Status](#status)). After `setup:testnet`, ids and transaction hashes are in [`deployments/testnet.json`](deployments/).
+NEAR testnet, deployed 2026-11-08 by `npm run setup:testnet` (all ids and transaction hashes: [`deployments/testnet.json`](deployments/testnet.json)).
+
+| Account | Role |
+|---|---|
+| [`vault.callsign-fdym.testnet`](https://testnet.nearblocks.io/address/vault.callsign-fdym.testnet) | Callsign vault (policy engine) |
+| [`token.callsign-fdym.testnet`](https://testnet.nearblocks.io/address/token.callsign-fdym.testnet) | tUSD demo token |
+| [`ceo.callsign-fdym.testnet`](https://testnet.nearblocks.io/address/ceo.callsign-fdym.testnet) | Ada Okafor, CEO (principal) |
+| [`cfo.callsign-fdym.testnet`](https://testnet.nearblocks.io/address/cfo.callsign-fdym.testnet) | Chidi Eze, CFO (principal) |
+| [`finance.callsign-fdym.testnet`](https://testnet.nearblocks.io/address/finance.callsign-fdym.testnet) | Tolu Bello, finance (requester) |
+| [`vendor.callsign-fdym.testnet`](https://testnet.nearblocks.io/address/vendor.callsign-fdym.testnet) | Harbor Office Supplies (known payee) |
+| [`supplier.callsign-fdym.testnet`](https://testnet.nearblocks.io/address/supplier.callsign-fdym.testnet) | Kestrel Logistics (new payee) |
+
+Owner/master: `callsign-fdym.testnet`. Policy: instant ≤ 500 tUSD, hold 5 min (×2 if high risk), max 5 held requests per requester.
 
 ## Built during NEAR HACKATHON
 
@@ -274,8 +292,8 @@ Third-party libraries: Rust — `near-sdk`, `near-contract-standards` (5.27.0), 
 |---|---|
 | Contracts + tests T1–T16 | ✅ done, green in `verify:all` |
 | Analyzer, TEE verification, evidence | ✅ done; real **signed** fixture pending a NEAR AI key |
-| Setup + demo scripts | ✅ rehearsed end to end on a local sandbox; testnet run pending master-account approval |
-| Web app incl. guided demo | ✅ works locally against the sandbox; hosted deploy pending |
+| Testnet deployment + demo scripts | ✅ deployed; `demo:scam`, `demo:legit`, `demo:attack`, `demo:reset` pass on testnet |
+| Web app incl. guided demo | ✅ driven end to end in a browser against testnet (all flows, 6/6 attacks blocked); hosted deploy pending |
 | Wallet flow | built; not yet tested with a real testnet wallet |
 
 ## Roadmap

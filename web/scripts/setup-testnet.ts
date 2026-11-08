@@ -64,11 +64,15 @@ function must(label: string, r: TxResult): TxResult {
 }
 
 async function exists(accountId: string): Promise<boolean> {
+  const original = console.error; // the RPC client logs "account does not exist" loudly
+  console.error = () => {};
   try {
     await getProvider().viewAccount({ accountId });
     return true;
   } catch {
     return false;
+  } finally {
+    console.error = original;
   }
 }
 
@@ -276,7 +280,7 @@ async function main() {
         .getPublicKey()
         .toString(),
       methods: FCK_METHODS,
-      allowance_near: "0.25",
+      allowance_near: FCK_ALLOWANCE,
     };
     console.log(`  ${color.dim("•")} key exists ${fck.public_key}`);
   } else {
@@ -296,7 +300,7 @@ async function main() {
     fck = {
       public_key: kp.getPublicKey().toString(),
       methods: FCK_METHODS,
-      allowance_near: "0.25",
+      allowance_near: FCK_ALLOWANCE,
     };
   }
 
@@ -321,6 +325,7 @@ async function main() {
     NEXT_PUBLIC_NEAR_NETWORK: network === "sandbox" ? "testnet" : network,
     NEXT_PUBLIC_VAULT_CONTRACT_ID: ids.vault,
     NEXT_PUBLIC_TOKEN_CONTRACT_ID: ids.token,
+    DEMO_MODE: "true",
     DEMO_FINANCE_ACCOUNT_ID: ids.finance,
     DEMO_CEO_ACCOUNT_ID: ids.ceo,
   });
