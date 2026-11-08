@@ -19,7 +19,8 @@
     "demo:legit": "tsx scripts/demo-legit.ts",
     "demo:attack": "tsx scripts/demo-attack.ts",
     "demo:expire": "tsx scripts/demo-expire.ts",
-    "demo:reset": "tsx scripts/demo-reset.ts"
+    "demo:reset": "tsx scripts/demo-reset.ts",
+    "verify:all": "tsx scripts/verify-all.ts"
   },
   "dependencies": {
     "@hot-labs/near-connect": "0.11.4",
@@ -43,5 +44,8 @@
     "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }

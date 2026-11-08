@@ -2,15 +2,7 @@
 import { formatTusd, toBaseUnits } from "../lib/near/format";
 import { confirmPayout, ftBalance, requestPayout, vaultViews } from "../lib/near/vault";
 import { analyzeScenario, printAnalysis } from "./lib/demo-analyze";
-import {
-  color,
-  demoSigners,
-  expect,
-  loadDeployment,
-  runDemo,
-  step,
-  txLine,
-} from "./lib/testnet";
+import { color, demoSigners, expect, loadDeployment, runDemo, step, txLine } from "./lib/testnet";
 
 runDemo(async () => {
   const d = loadDeployment();

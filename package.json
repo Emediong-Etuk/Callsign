@@ -3,8 +3,23 @@
   "private": true,
   "description": "Callsign: a payment firewall against deepfake impersonation scams, on NEAR",
   "license": "MIT",
+  "engines": { "node": ">=20.19" },
   "scripts": {
+    "postinstall": "npm --prefix web ci --no-audit --no-fund",
+    "verify:all": "npm --prefix web run verify:all",
     "test:contracts": "bash contracts/tools/test.sh",
-    "lint:contracts": "cd contracts && cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings"
+    "test:web": "npm --prefix web test",
+    "lint:contracts": "cd contracts && cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings",
+    "verify:fixture": "npm --prefix web run verify:fixture",
+    "check:secrets": "npm --prefix web run check:secrets",
+    "capture:fixture": "npm --prefix web run capture:fixture",
+    "setup:testnet": "npm --prefix web run setup:testnet",
+    "demo:scam": "npm --prefix web run demo:scam",
+    "demo:legit": "npm --prefix web run demo:legit",
+    "demo:attack": "npm --prefix web run demo:attack",
+    "demo:expire": "npm --prefix web run demo:expire",
+    "demo:reset": "npm --prefix web run demo:reset",
+    "dev": "npm --prefix web run dev",
+    "build": "npm --prefix web run build"
   }
 }

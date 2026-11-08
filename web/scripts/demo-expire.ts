@@ -1,15 +1,7 @@
 /** npm run demo:expire — silence is safe: a held request expires and its funds are released. */
 import { formatTusd, toBaseUnits } from "../lib/near/format";
 import { requestPayout, sweepExpired, vaultViews } from "../lib/near/vault";
-import {
-  color,
-  demoSigners,
-  expect,
-  loadDeployment,
-  runDemo,
-  step,
-  txLine,
-} from "./lib/testnet";
+import { color, demoSigners, expect, loadDeployment, runDemo, step, txLine } from "./lib/testnet";
 
 runDemo(async () => {
   const d = loadDeployment();

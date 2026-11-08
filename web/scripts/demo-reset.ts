@@ -4,7 +4,16 @@ import { TGAS } from "../lib/near/config";
 import { formatTusd } from "../lib/near/format";
 import { accountFor } from "../lib/near/client";
 import { ftBalance, sweepExpired, vaultViews } from "../lib/near/vault";
-import { color, demoSigners, detail, loadDeployment, runDemo, secretFor, step, txLine } from "./lib/testnet";
+import {
+  color,
+  demoSigners,
+  detail,
+  loadDeployment,
+  runDemo,
+  secretFor,
+  step,
+  txLine,
+} from "./lib/testnet";
 
 runDemo(async () => {
   const d = loadDeployment();
@@ -14,14 +23,27 @@ runDemo(async () => {
   step(1, 2, `Swept ${sw.ok ? String(sw.value) : `0 (${sw.error})`} expired request(s)`);
   txLine(sw);
   // Recycle demo payouts: the vendor and supplier are our own demo accounts.
-  for (const [name, envVar] of [["vendor", "DEMO_VENDOR_SECRET"], ["supplier", "DEMO_SUPPLIER_SECRET"]] as const) {
+  for (const [name, envVar] of [
+    ["vendor", "DEMO_VENDOR_SECRET"],
+    ["supplier", "DEMO_SUPPLIER_SECRET"],
+  ] as const) {
     const id = d.accounts[name];
     const held = await ftBalance(d.accounts.token, id);
     if (held === 0n) continue;
     try {
       const acct = accountFor(id, secretFor(id, envVar));
-      const back = await call(acct, d.accounts.token, "ft_transfer_call", { receiver_id: d.accounts.vault, amount: held.toString(), msg: "" }, { deposit: 1n, gas: 50n * TGAS });
-      detail(back.ok ? `recycled ${formatTusd(held)} from ${name} back into the vault` : color.red(`could not recycle from ${name}: ${back.error}`));
+      const back = await call(
+        acct,
+        d.accounts.token,
+        "ft_transfer_call",
+        { receiver_id: d.accounts.vault, amount: held.toString(), msg: "" },
+        { deposit: 1n, gas: 50n * TGAS },
+      );
+      detail(
+        back.ok
+          ? `recycled ${formatTusd(held)} from ${name} back into the vault`
+          : color.red(`could not recycle from ${name}: ${back.error}`),
+      );
     } catch (e) {
       detail(color.dim(`skip ${name}: ${(e as Error).message}`));
     }
