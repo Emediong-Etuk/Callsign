@@ -37,9 +37,9 @@ const FUNDING: Record<string, string> = {
   vault: process.env.FUND_VAULT_NEAR || "3.6",
   ceo: "0.4",
   cfo: "0.2",
-  finance: "0.5",
-  vendor: "0.05",
-  supplier: "0.05",
+  finance: "1.0",
+  vendor: "0.15",
+  supplier: "0.15",
 };
 const ENV_KEY: Record<string, string> = {
   token: "TOKEN_ACCOUNT_SECRET",
@@ -51,6 +51,9 @@ const ENV_KEY: Record<string, string> = {
   supplier: "DEMO_SUPPLIER_SECRET",
 };
 const FCK_METHODS = ["request_payout", "cancel_payout"];
+// Gas allowance for Tolu's limited key. Each request reserves ~0.01 NEAR of it
+// (100 Tgas prepaid); when it runs out the key stops working (see README caveat).
+const FCK_ALLOWANCE = (process.env.FCK_ALLOWANCE_NEAR || "2") as `${number}`;
 
 const txs: Record<string, string> = {};
 function must(label: string, r: TxResult): TxResult {
@@ -285,7 +288,7 @@ async function main() {
           publicKey: kp.getPublicKey().toString(),
           contractId: ids.vault,
           methodNames: FCK_METHODS,
-          allowance: nearToYocto("0.25"),
+          allowance: nearToYocto(FCK_ALLOWANCE),
         }),
       ),
     );

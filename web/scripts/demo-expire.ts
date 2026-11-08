@@ -4,7 +4,6 @@ import { requestPayout, sweepExpired, vaultViews } from "../lib/near/vault";
 import {
   color,
   demoSigners,
-  detail,
   expect,
   loadDeployment,
   runDemo,

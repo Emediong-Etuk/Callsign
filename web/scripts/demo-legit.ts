@@ -5,7 +5,6 @@ import { analyzeScenario, printAnalysis } from "./lib/demo-analyze";
 import {
   color,
   demoSigners,
-  detail,
   expect,
   loadDeployment,
   runDemo,

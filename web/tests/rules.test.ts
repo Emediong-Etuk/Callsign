@@ -129,3 +129,14 @@ describe("rule levels", () => {
     expect(levelFor(["urgency", "unusual_channel"])).toBe("medium");
   });
 });
+
+describe("scenario texts", () => {
+  it("lib/scenarios.ts matches fixtures/scenarios/*.txt exactly", async () => {
+    const { SCENARIOS } = await import("../lib/scenarios");
+    for (const [name, text] of Object.entries(SCENARIOS)) expect(text).toBe(scenario(name));
+  });
+  it("the genuine supplier request is not high risk by the rules", () => {
+    const r = runRules(input(scenario("supplier-first-invoice"), { receiverId: "supplier.callsign-demo.testnet", amount: "2000000000" }));
+    expect(r.level).not.toBe("high");
+  });
+});
