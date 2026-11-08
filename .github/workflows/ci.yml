@@ -17,6 +17,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: contracts
+      # The sandbox tests compile the contracts with `cargo near` (near-workspaces
+      # calls the CLI). Built from crates.io; the cache keeps ~/.cargo/bin between runs.
+      - name: Install cargo-near
+        run: cargo near --version 2>/dev/null || cargo install --locked cargo-near@0.23.0
       - uses: actions/setup-node@v4
         with:
           node-version: 22

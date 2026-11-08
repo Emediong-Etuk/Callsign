@@ -70,6 +70,10 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 4. **Vercel deploy** for the hosted demo — approve, and which Vercel account/team?
 5. §0.2 personal details for SUBMISSION.md (mainnet prize account, X handle, email) — or keep placeholders and fill them yourself.
 
+## CI notes
+
+- 2026-11-08: first CI run on PR #1 failed only the contract sandbox tests: `near_workspaces::compile_project` (cargo-near-build 0.11.5) shells out to the **`cargo near` CLI**, which the runner lacked. My local fresh-clone check passed only because cargo-near was installed here. Fixes: CI installs `cargo-near@0.23.0` from crates.io (not the curl installer script, per rule 9); `contracts/tools/test.sh` fails fast with an install hint; README prerequisites now list cargo-near. GitHub also warns that actions/checkout@v4 and setup-node@v4 run on Node 20 (deprecated) — warning only.
+
 ## Testnet notes
 
 - Master balance after setup: ~2.14 NEAR (faucet gave 10; sub-accounts funded per `setup-testnet.ts`).

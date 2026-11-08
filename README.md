@@ -64,7 +64,11 @@ sequenceDiagram
 
 ## For judges: verify in 5 minutes (no keys needed)
 
-Prerequisites: **Node 20.19+** (tested on 22), **Rust via rustup** (the pinned 1.86.0 toolchain and the `wasm32-unknown-unknown` target install automatically from `contracts/rust-toolchain.toml`), a C compiler, and on Linux `libudev-dev` + `pkg-config`. No wallet, no API key, no testnet account.
+Prerequisites: **Node 20.19+** (tested on 22), **Rust via rustup** (the pinned 1.86.0 toolchain and the `wasm32-unknown-unknown` target install automatically from `contracts/rust-toolchain.toml`), **`cargo-near`** (the sandbox tests compile the contracts with it), a C compiler, and on Linux `libudev-dev` + `pkg-config`. No wallet, no API key, no testnet account.
+
+```bash
+cargo install --locked cargo-near
+```
 
 ```bash
 git clone https://github.com/Emediong-Etuk/Callsign && cd Callsign
@@ -100,7 +104,7 @@ Then, once it's live, the hosted demo: open `/demo` â†’ **Deepfake CEO wire** â†
 
 ## Run it against testnet yourself
 
-You need `cargo-near` and `near-cli-rs` (`cargo install --locked cargo-near near-cli-rs`).
+You also need `near-cli-rs` (`cargo install --locked near-cli-rs`) to create the master account.
 
 1. Create a master account with the faucet, saving the key where the scripts can read it:
 
