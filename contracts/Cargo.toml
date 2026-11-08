@@ -1,0 +1,25 @@
+[workspace]
+resolver = "3"
+members = ["vault", "test-token"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.86"
+license = "MIT"
+repository = "https://github.com/Emediong-Etuk/Callsign"
+
+[workspace.dependencies]
+# Pinned: newest near-sdk line whose rust-version is 1.86 (the toolchain the
+# current `cargo near new` template pins). See PROGRESS.md decision log.
+near-sdk = "=5.27.0"
+near-contract-standards = "=5.27.0"
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+# Arithmetic overflow aborts instead of wrapping: a wrapped balance would be a
+# silent accounting bug in a contract that holds funds.
+overflow-checks = true

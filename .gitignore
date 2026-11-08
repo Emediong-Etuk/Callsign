@@ -1,0 +1,24 @@
+# secrets
+.env*
+!.env.example
+*.pem
+**/near-credentials/
+.near-credentials/
+
+# rust
+target/
+**/target/
+
+# node / next
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+coverage/
+
+# misc
+.DS_Store
+*.log
+.vercel
+deployments/sandbox.json

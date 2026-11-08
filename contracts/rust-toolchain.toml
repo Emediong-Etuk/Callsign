@@ -1,0 +1,5 @@
+[toolchain]
+# Same channel the current `cargo near new` template pins.
+channel = "1.86.0"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]

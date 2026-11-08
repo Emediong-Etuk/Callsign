@@ -1,0 +1,54 @@
+{
+  "network": "testnet",
+  "prefix": "callsign-fdym",
+  "master": "callsign-fdym.testnet",
+  "accounts": {
+    "token": "token.callsign-fdym.testnet",
+    "vault": "vault.callsign-fdym.testnet",
+    "ceo": "ceo.callsign-fdym.testnet",
+    "cfo": "cfo.callsign-fdym.testnet",
+    "finance": "finance.callsign-fdym.testnet",
+    "vendor": "vendor.callsign-fdym.testnet",
+    "supplier": "supplier.callsign-fdym.testnet"
+  },
+  "policy": {
+    "instant_limit": "500000000",
+    "hold_window_ns": "300000000000",
+    "high_risk_hold_multiplier": 2,
+    "max_pending_per_requester": 5
+  },
+  "finance_function_call_key": {
+    "public_key": "ed25519:CZCdKFwqMvvshpBZw5CjCinvLDEEsiR5vAtHopqG8PZn",
+    "methods": [
+      "request_payout",
+      "cancel_payout"
+    ],
+    "allowance_near": "2"
+  },
+  "txs": {
+    "create token.callsign-fdym.testnet": "8BaX8wcwWVxnMYeCd3dVNpjs3PMVPbQGmvp3j3eYNscU",
+    "create vault.callsign-fdym.testnet": "Hn1yv3YNi24AZtnTYLjFFqDSx91DzPk4YjBn1UszmZAD",
+    "create ceo.callsign-fdym.testnet": "HdDwomrPyNEt2fK2iT9f37HgcffZNtPbjje21mkG46VM",
+    "create cfo.callsign-fdym.testnet": "z4eVanotNv9hFh7HZogARQjnSnHpuV4LbFDknN9yuRt",
+    "create finance.callsign-fdym.testnet": "59mqLfdPveTLXBRpEPWUWHx2q843Rd77DT9nyAL2D8G3",
+    "create vendor.callsign-fdym.testnet": "Bchfho2K7oCMF9jxna7bGr3g9KKBfBWgrEVPbgHUntBE",
+    "create supplier.callsign-fdym.testnet": "7oJauq1nYb3RmyFRGnnqgHrrF5DF2VYfan4SjHsrUyHk",
+    "deploy token": "9TBRuZqyvp48cu9JVzom5HSAatBa7TX67ioJaZchHY4f",
+    "init token": "GWhCs1yeAqc6vW2zrduSuwdDREb1VktQcFgqxLz7u2ww",
+    "deploy vault": "8o9jddF5UpPB9TEiwrLBnqsBvRc7GUTcTtjjYW42NUG2",
+    "init vault": "DTUPmxui3qTXarQgk2VpTuCmsisBZdAg9nbXUNReezqi",
+    "storage vault.callsign-fdym.testnet": "4STUe3LaPUbHTjdfujzpHACUxZpLnGA5REUVnGLL1o1u",
+    "storage vendor.callsign-fdym.testnet": "DgDBuvZpLXczaBc9ETYxHuYSa9aTgvLa5pG3NR5BvJQR",
+    "storage supplier.callsign-fdym.testnet": "2MhK2Lx98o7dJV8GCDsAmmCu88etj5y7fyNnBusMVucY",
+    "storage finance.callsign-fdym.testnet": "B3CmZP9pPcXabsu4W1by9uFjGdnnidrEQhPdvA3NdAVE",
+    "storage ceo.callsign-fdym.testnet": "7mMjA12xu14PfCrzfqATUXAfvN9FyX8R53KVsp66aQGt",
+    "storage cfo.callsign-fdym.testnet": "Ba5g5WkfdzsDKYmLzkkein5rVVevfwSTDdKYcRsYhccN",
+    "deposit 100,000 tUSD": "4AxufDZs9EZTkabcASuobTWFK7YE9KdbSNyxsaqxBTwY",
+    "add member Ada Okafor": "D6C5acNnaUZcEnDxv3AhGnQPpbB28Q4U3bmvoFdFcFh9",
+    "add member Chidi Eze": "AS54oMoe4PU9mPaH99Ne6NjoXPSzxeit8uGUyFAAxhwi",
+    "add member Tolu Bello": "DC7ceHunCK2daLs9cyMXj5aY4c463rApbyZ1362x2Vbf",
+    "add payee Harbor Office Supplies": "AWWmDxtSLtRmqxnUDgFppDYKEjEuERpfv33ZwcREs9V7",
+    "add function-call key": "QfXvfGTJxvW1o66oPBhkAqV5zrRHsQMSCkqjLD9mn66"
+  },
+  "deployed_at": "2026-11-08T17:20:58.329Z"
+}
