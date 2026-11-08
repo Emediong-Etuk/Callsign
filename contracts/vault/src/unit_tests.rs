@@ -50,7 +50,12 @@ fn setup() -> Vault {
     let mut v = Vault::new(acc(OWNER), acc(TOKEN), None);
     set_ctx(OWNER, 1, T0);
     v.add_member(acc(CEO), "Ada".into(), "CEO".into(), vec![Role::Principal]);
-    v.add_member(acc(FIN), "Tolu".into(), "Finance".into(), vec![Role::Requester]);
+    v.add_member(
+        acc(FIN),
+        "Tolu".into(),
+        "Finance".into(),
+        vec![Role::Requester],
+    );
     v.add_payee(acc(VENDOR), "Harbor".into());
     set_ctx(TOKEN, 0, T0);
     let _ = v.ft_on_transfer(acc(OWNER), U128(10_000_000_000), String::new());
@@ -65,7 +70,10 @@ fn assert_invariants(v: &Vault) {
 fn routing_rules() {
     // known payee, under limit, not high → instant
     assert_eq!(route_for(true, 100, 500, RiskLevel::Low), Route::Instant);
-    assert_eq!(route_for(true, 500, 500, RiskLevel::Unknown), Route::Instant);
+    assert_eq!(
+        route_for(true, 500, 500, RiskLevel::Unknown),
+        Route::Instant
+    );
     assert_eq!(route_for(true, 500, 500, RiskLevel::Medium), Route::Instant);
     // any single condition failing → hold
     assert_eq!(
@@ -189,7 +197,13 @@ fn held_request_reserves_and_high_risk_doubles_hold() {
 fn instant_request_deducts_before_promise() {
     let mut v = setup();
     set_ctx(FIN, 0, T0);
-    let id = v.request_payout(acc(CEO), acc(VENDOR), U128(200_000_000), String::new(), None);
+    let id = v.request_payout(
+        acc(CEO),
+        acc(VENDOR),
+        U128(200_000_000),
+        String::new(),
+        None,
+    );
     let r = v.get_request(id).unwrap();
     assert_eq!(r.request.status, Status::Executing);
     assert_eq!(v.vault_balance, 10_000_000_000 - 200_000_000);
@@ -303,4 +317,16 @@ fn error_list_is_complete_and_unique() {
         assert!(e.starts_with("ERR_"));
         assert!(seen.insert(*e), "duplicate {e}");
     }
+}
+
+#[test]
+#[should_panic(expected = "ERR_NOT_PRINCIPAL")]
+fn deactivated_principal_cannot_confirm() {
+    let mut v = setup();
+    set_ctx(FIN, 0, T0);
+    let id = v.request_payout(acc(CEO), acc(NEWBIE), U128(5), String::new(), None);
+    set_ctx(OWNER, 1, T0);
+    v.set_member_active(acc(CEO), false);
+    set_ctx(CEO, 1, T0 + 1);
+    let _ = v.confirm_payout(id);
 }

@@ -178,7 +178,8 @@ impl Vault {
                 req.expires_at_ns = Some(U64(expires));
                 self.reserved += amount.0;
                 self.pending_ids.insert(id);
-                self.pending_by_requester.insert(caller.clone(), pending + 1);
+                self.pending_by_requester
+                    .insert(caller.clone(), pending + 1);
                 self.save_request(req);
                 emit(
                     "payout_requested",
@@ -220,11 +221,19 @@ impl Vault {
     pub fn confirm_payout(&mut self, id: U64) -> PromiseOrValue<bool> {
         assert_one_yocto();
         let mut req = self.get_request_or_panic(id.0);
-        // Only the person the request claims to come from can release it.
+        // Only the person the request claims to come from can release it...
         require!(
             env::predecessor_account_id() == req.claimed_principal,
             ERR_NOT_PRINCIPAL
         );
+        // ...and only while they are still an active principal: if the owner
+        // deactivates a (possibly compromised) principal, their pending
+        // approvals stop working immediately.
+        let still_principal = self
+            .members
+            .get(&req.claimed_principal)
+            .is_some_and(|m| m.active && m.has_role(Role::Principal));
+        require!(still_principal, ERR_NOT_PRINCIPAL);
         require!(req.status == Status::Pending, ERR_NOT_PENDING);
 
         let now = env::block_timestamp();
@@ -351,10 +360,7 @@ impl Vault {
         // ft_transfer returns no value. Only `Failed` means the tokens did not
         // move; `TooLong` would still be a successful call, so it must not
         // re-credit the balance.
-        let ok = !matches!(
-            env::promise_result_checked(0, 0),
-            Err(PromiseError::Failed)
-        );
+        let ok = !matches!(env::promise_result_checked(0, 0), Err(PromiseError::Failed));
         if ok {
             req.status = Status::Executed;
             self.save_request(req);

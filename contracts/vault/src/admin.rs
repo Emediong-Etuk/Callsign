@@ -42,7 +42,11 @@ impl Vault {
         };
         self.members.insert(account_id.clone(), member.clone());
         emit(
-            if existed { "member_updated" } else { "member_added" },
+            if existed {
+                "member_updated"
+            } else {
+                "member_added"
+            },
             json!({ "account_id": account_id, "display_name": member.display_name,
                     "title": member.title, "roles": member.roles, "active": true }),
         );
@@ -110,10 +114,7 @@ impl Vault {
     pub fn clear_flag(&mut self, receiver_id: AccountId) {
         assert_one_yocto();
         self.assert_owner();
-        require!(
-            self.flags.remove(&receiver_id).is_some(),
-            ERR_NOT_FLAGGED
-        );
+        require!(self.flags.remove(&receiver_id).is_some(), ERR_NOT_FLAGGED);
         emit("flag_cleared", json!({ "account_id": receiver_id }));
     }
 }

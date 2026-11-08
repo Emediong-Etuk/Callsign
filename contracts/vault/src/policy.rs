@@ -42,7 +42,8 @@ pub fn assert_valid_policy(policy: &Policy) {
 }
 
 fn is_lower_hex(s: &str) -> bool {
-    s.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    s.bytes()
+        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
 /// Bounds and allow-list checks on the categorical evidence (step 6).

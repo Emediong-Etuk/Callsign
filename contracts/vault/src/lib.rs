@@ -97,7 +97,10 @@ impl Vault {
     pub(crate) fn assert_owner(&self) {
         // Owner-only methods also require 1 yocto (checked by the caller) so a
         // leaked function-call key of the owner can't change policy.
-        require!(env::predecessor_account_id() == self.owner_id, ERR_NOT_OWNER);
+        require!(
+            env::predecessor_account_id() == self.owner_id,
+            ERR_NOT_OWNER
+        );
     }
 
     pub(crate) fn available(&self) -> u128 {
@@ -135,11 +138,16 @@ impl Vault {
     }
 
     pub(crate) fn decrement_pending(&mut self, requester: &AccountId) {
-        let count = self.pending_by_requester.get(requester).copied().unwrap_or(0);
+        let count = self
+            .pending_by_requester
+            .get(requester)
+            .copied()
+            .unwrap_or(0);
         if count <= 1 {
             self.pending_by_requester.remove(requester);
         } else {
-            self.pending_by_requester.insert(requester.clone(), count - 1);
+            self.pending_by_requester
+                .insert(requester.clone(), count - 1);
         }
     }
 }

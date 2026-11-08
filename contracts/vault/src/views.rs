@@ -147,8 +147,7 @@ impl Vault {
 
 impl Vault {
     fn to_view(&self, r: &PayoutRequest) -> RequestView {
-        let overdue =
-            r.status == Status::Pending && Self::is_expired(r, env::block_timestamp());
+        let overdue = r.status == Status::Pending && Self::is_expired(r, env::block_timestamp());
         RequestView {
             request: r.clone(),
             effective_status: if overdue { Status::Expired } else { r.status },

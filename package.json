@@ -1,0 +1,10 @@
+{
+  "name": "callsign",
+  "private": true,
+  "description": "Callsign: a payment firewall against deepfake impersonation scams, on NEAR",
+  "license": "MIT",
+  "scripts": {
+    "test:contracts": "bash contracts/tools/test.sh",
+    "lint:contracts": "cd contracts && cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings"
+  }
+}

@@ -4,8 +4,8 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 
 ## Phase checklist
 
-- [ ] **P0 Setup** — docs read, CLAUDE.md, PROGRESS.md, scaffold, toolchains, LICENSE
-- [ ] **P1 Contracts** — token + vault, unit + integration tests T1–T16, clippy clean
+- [x] **P0 Setup** — docs read, CLAUDE.md, PROGRESS.md, scaffold, toolchains, LICENSE (2026-11-08)
+- [x] **P1 Contracts** — token + vault, unit + integration tests T1–T16, clippy clean (2026-11-08: 4 token unit + 21 vault unit + 16 sandbox integration tests green)
 - [ ] **P2 Testnet** — master account (needs Greg's approval), setup:testnet, demo:scam/legit/attack
 - [ ] **P3 AI** — rules, NEAR AI client, verification, evidence bundle, fixture, vitest
 - [ ] **P4 Web** — pages, demo mode, wallet flow, hosted demo (ask before Vercel)
@@ -27,6 +27,11 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 - **2026-11-08** — Build environment: cloud sandbox had no access to NEAR hosts. Created a personal cloud environment `callsign` (Greg approved) allowing nearhackathon.com, docs.near.org, docs.near.ai, cloud-api.near.ai, testnet RPCs, nearblocks, crates.io etc.
 - **2026-11-08** — Rust toolchain: current `cargo near new` template (github.com/near/cargo-near-new-project-template, main) pins `1.86.0` with `near-sdk 5.24`, `near-workspaces 0.22`. Latest near-sdk (5.30.1) needs Rust 1.95, so we pin **near-sdk / near-contract-standards 5.27.0** (newest with `rust-version = 1.86`) and toolchain **1.86.0** per §5. 
 - **2026-11-08** — Generated testnet prefix `callsign-fdym`.
+- **2026-11-08** — Toolchain versions verified: node v22.23.4, cargo-near 0.23.0, near-cli-rs 0.31.1 (both built from crates.io; needed `libudev-dev`), Rust 1.86.0 for contracts (rust-toolchain.toml), near-workspaces 0.22.1 (newest without an MSRV above 1.86), sandbox neard 2.13.4.
+- **2026-11-08** — Sandbox in containers: neard insists on a 65535 open-files limit; this container's hard limit is 20000 and can't be raised. Added `contracts/tools/fdlimit-shim.c`, an LD_PRELOAD shim that clamps the request; `contracts/tools/test.sh` builds/uses it only when the hard limit is too low. Judges' containers may hit the same limit, so it's in the repo.
+- **2026-11-08** — Contract design choices within the brief: request history in `LookupMap<u64, _>` with contiguous ids from 1 plus an `IterableSet` of pending ids (cheap sweeps and principal inboxes) and a per-requester id list; `ERR_TOO_MANY_PENDING` applies to every new request (rule 5 runs before routing); extra error codes `ERR_NOT_EXPIRED`, `ERR_NOT_YOUR_REQUEST`, `ERR_NOT_AUTHORIZED_TO_REJECT`, `ERR_REQUEST_NOT_FOUND`, `ERR_INVALID_POLICY`, `ERR_NOT_FLAGGED`, `ERR_MEMBER_NOT_FOUND`, `ERR_PAYEE_NOT_FOUND`; duplicate flags rejected; enum JSON values are PascalCase (`"Pending"`, `"High"`).
+- **2026-11-08** — Extra safety beyond the brief: `confirm_payout` also requires the claimed principal to still be an *active* principal, so deactivating a compromised principal kills their pending approvals (unit test `deactivated_principal_cannot_confirm`). The callback treats only `PromiseError::Failed` as failure.
+- **2026-11-08** — Git push to `origin` was blocked by the session's permission check (consistent with brief rule 5). Commits stay local until Greg approves pushing.
 
 ## Differences between the brief and live sources
 

@@ -81,7 +81,10 @@ impl Contract {
     #[payable]
     pub fn mint(&mut self, account_id: AccountId, amount: U128) {
         assert_one_yocto();
-        require!(env::predecessor_account_id() == self.owner_id, ERR_NOT_OWNER);
+        require!(
+            env::predecessor_account_id() == self.owner_id,
+            ERR_NOT_OWNER
+        );
         // internal_deposit panics if the account is not storage-registered (NEP-145).
         self.token.internal_deposit(&account_id, amount.into());
         near_contract_standards::fungible_token::events::FtMint {
