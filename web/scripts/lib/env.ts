@@ -4,7 +4,12 @@ import path from "node:path";
 
 export function loadEnv(): void {
   const web = path.resolve(import.meta.dirname, "..", "..");
-  for (const file of [path.join(web, ".env.local"), path.join(web, "..", ".env.local")]) {
+  const files = [
+    process.env.CALLSIGN_ENV_FILE,
+    path.join(web, ".env.local"),
+    path.join(web, "..", ".env.local"),
+  ];
+  for (const file of files.filter((f): f is string => !!f)) {
     if (!existsSync(file)) continue;
     for (const line of readFileSync(file, "utf8").split(/\r?\n/)) {
       const m = /^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/.exec(line);
