@@ -1,0 +1,14 @@
+[
+  "urgency",
+  "secrecy",
+  "authority_pressure",
+  "new_payee",
+  "changed_payment_details",
+  "unusual_channel",
+  "bypass_process",
+  "emotional_pressure",
+  "lookalike_account",
+  "credential_or_code_request",
+  "amount_anomaly",
+  "instruction_injection"
+]
