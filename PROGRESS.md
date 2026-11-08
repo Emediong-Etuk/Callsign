@@ -78,6 +78,10 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 - `next.config.ts` loads the repo-root `.env.local` for local runs (Next.js only reads `web/.env*` by itself). `setup:testnet` now also writes `DEMO_MODE=true`.
 - nearblocks.io returns 403 to curl from this sandbox (bot protection); links work in a browser.
 
+## NEAR AI key
+
+- 2026-11-08: Greg's key saved as a network secret on the `callsign` cloud environment (proxy injects it for cloud-api.near.ai; code uses `NEARAI_API_KEY=proxy-injected` locally). Key is accepted but the account returns **402 "No spending limit configured"** → needs credits on cloud.near.ai. Until then the analyzer correctly reports "unavailable" and raises risk to ≥ medium.
+
 ## Session log
 
 - **2026-11-08 (session 1)** — P0–P1 done; P2 scripts + P3 analyzer + P4 web + P5 docs drafted and verified locally (sandbox). Then Greg approved testnet: P2 done on testnet; README updated with real testnet output and contract ids.
