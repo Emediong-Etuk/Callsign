@@ -161,6 +161,8 @@ async function postCompletion(
     signal,
   });
   const text = await res.text();
+  if (res.status === 401 || res.status === 403) throw new Error("NEAR AI rejected the API key");
+  if (res.status === 402) throw new Error("NEAR AI account has no credits or spending limit");
   if (!res.ok) throw new Error(`completion HTTP ${res.status}`);
   return text;
 }
