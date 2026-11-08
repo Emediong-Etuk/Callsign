@@ -7,7 +7,7 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 - [x] **P0 Setup** — docs read, CLAUDE.md, PROGRESS.md, scaffold, toolchains, LICENSE (2026-11-08)
 - [x] **P1 Contracts** — token + vault, unit + integration tests T1–T16, clippy clean (2026-11-08: 4 token unit + 21 vault unit + 16 sandbox integration tests green)
 - [x] **P2 Testnet** — (2026-11-08, Greg approved) master `callsign-fdym.testnet` created via faucet; `setup:testnet` deployed everything (idempotent re-run makes no changes); `demo:scam`, `demo:legit`, `demo:attack`, `demo:reset` exit 0 on testnet with expected output; `deployments/testnet.json` committed (no secrets).
-- [ ] **P3 AI** — rules, NEAR AI client, attestation + signature verification, evidence bundle, vitest (46 + 1 pending) done; real attestation fixture captured. **Blocked:** real signed completion fixture needs a NEAR AI API key (`npm run capture:fixture`).
+- [x] **P3 AI** — (2026-11-08) live NEAR AI checks verified (`provider_tee`, all checks pass): ceo-urgent-wire high, routine-invoice low, injection-attempt high; real signed fixture captured and re-verified offline (tamper tests fail as they should); vitest 47/47; `demo:scam` on testnet shows "signature verified ✅" and the on-chain evidence carries categories + hash only.
 - [ ] **P4 Web** — all pages + demo mode + API routes built; `/demo` driven end to end in headless Chromium against the sandbox (all flows OK, 6/6 attacks blocked, no console errors). Also driven end to end in a browser **against testnet** (all flows, 6/6 attacks blocked, no console errors). **Pending:** hosted deploy (needs approval), wallet flow test with a real testnet wallet.
 - [ ] **P5 Docs + judge simulation** — README, ARCHITECTURE, THREAT_MODEL, DEMO_SCRIPT, SUBMISSION drafted; CI workflow written; `verify:all` green from repo root. **Pending:** judge simulation on a fresh clone after testnet + hosting; CI can't run until the branch is pushed.
 - [ ] **P6 Handoff**
@@ -65,7 +65,7 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 ## Open questions for Greg
 
 1. ~~Approve Phase 2~~ — done 2026-11-08.
-2. **NEAR AI API key** (from cloud.near.ai or the NEAR Builders $10 credit) — needed for the real signed fixture and the "TEE-verified" badge.
+2. ~~NEAR AI API key~~ — done 2026-11-08.
 3. The branch is pushed. Is the repo private? (It must be public by the deadline — I'll ask before changing anything.)
 4. **Vercel deploy** for the hosted demo — approve, and which Vercel account/team?
 5. §0.2 personal details for SUBMISSION.md (mainnet prize account, X handle, email) — or keep placeholders and fill them yourself.
@@ -80,7 +80,7 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 
 ## NEAR AI key
 
-- 2026-11-08: Greg's key saved as a network secret on the `callsign` cloud environment (proxy injects it for cloud-api.near.ai; code uses `NEARAI_API_KEY=proxy-injected` locally). Key is accepted but the account returns **402 "No spending limit configured"** → needs credits on cloud.near.ai. Until then the analyzer correctly reports "unavailable" and raises risk to ≥ medium.
+- 2026-11-08: Greg's key saved as a network secret on the `callsign` cloud environment (proxy injects it for cloud-api.near.ai; code uses `NEARAI_API_KEY=proxy-injected` locally). First returned 402 (no credits); Greg added ~$5 credits; live calls now succeed. Measured cost ≈ $0.0006 per check ($0.17/M input, $1.10/M output tokens); latency 1–2.5 s.
 
 ## Session log
 

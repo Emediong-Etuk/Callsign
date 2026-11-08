@@ -78,7 +78,7 @@ npm install
 npm run verify:all
 ```
 
-It runs Rust fmt + clippy, 25 contract unit tests and the 16 sandbox integration tests (T1–T16, a real local NEAR node), the web typecheck, lint, 46 analyzer/verification tests (one more runs once the signed NEAR AI fixture is captured), an offline re-check of real NEAR AI attestation evidence, and the secret scan. The first run downloads crates and the NEAR sandbox binary (a few minutes). Expected ending:
+It runs Rust fmt + clippy, 25 contract unit tests and the 16 sandbox integration tests (T1–T16, a real local NEAR node), the web typecheck, lint, 47 analyzer/verification tests, an offline re-check of a real signed NEAR AI response and its attestation, and the secret scan. The first run downloads crates and the NEAR sandbox binary (a few minutes). Expected ending:
 
 ```
 ══════════════ verify:all summary ══════════════
@@ -123,14 +123,14 @@ You need `cargo-near` and `near-cli-rs` (`cargo install --locked cargo-near near
    ```
 
    ```
-   [2/6] Red-flag check: HIGH  (rules only — NEAR AI disabled (no NEARAI_API_KEY))
-         urgency · secrecy · authority_pressure · changed_payment_details · new_payee · amount_anomaly
-   [3/6] Tolu requested 25,000 tUSD → fastpay-606671.testnet
-         HELD — waiting for Ada Okafor (ceo.callsign-fdym.testnet) · expires 18:31:07 WAT
-         tx: https://testnet.nearblocks.io/txns/7Bq8MJx8BTYpvHLvNGKfZHUpfvmBUf3YQdzMviHC9UUh
+         urgency · secrecy · authority_pressure · changed_payment_details · new_payee · amount_anomaly · bypass_process · unusual_channel
+   [2/6] Red-flag check: HIGH  (NEAR AI · Qwen/Qwen3.6-35B-A3B-FP8 · signature verified ✅)
+   [3/6] Tolu requested 25,000 tUSD → fastpay-66a265.testnet
+         HELD — waiting for Ada Okafor (ceo.callsign-fdym.testnet) · expires 19:11:10 WAT
+         tx: https://testnet.nearblocks.io/txns/7Zc3Qhh12jw3akGAKYsyMh1apt9ZGuPfYhpWCCxBAdyp
    [4/6] Ada: "I didn't send this" → BLOCKED & REPORTED · receiver flagged on-chain
-         tx: https://testnet.nearblocks.io/txns/7vdLGFiE4oGgn4gpBYbRM4xKJZ5mZ1YmRVZUvYgyZea5
-   [5/6] Retry to fastpay-606671.testnet → rejected: ERR_RECEIVER_FLAGGED ✅
+         tx: https://testnet.nearblocks.io/txns/HyQmJz1Ez2LdjjEmFadTYYNFjtwoDy3brpnCLZxfrHaa
+   [5/6] Retry to fastpay-66a265.testnet → rejected: ERR_RECEIVER_FLAGGED ✅
    [6/6] Vault available: 100,000 tUSD (unchanged) ✅
    ```
 
@@ -238,7 +238,9 @@ Model: `Qwen/Qwen3.6-35B-A3B-FP8`, chosen because `/v1/attestation/report?provid
 
 `aiStatus = "verified"` only if 2, 4 and 5 all pass. **Not checked by this app:** the Intel DCAP signature chain of the quote and NVIDIA GPU evidence (NRAS) — so we prove the answer is signed by the key the attestation claims, bound to our fresh nonce, not that the hardware itself is genuine. For that, use [NEAR's Verification Center](https://cloud.near.ai/verify). The `signature_verified` flag stored on-chain is reported by the app (client-asserted), not re-checked by the contract.
 
-`web/fixtures/nearai-attestation-sample.json` is a real attestation report captured without a key; `npm run verify:fixture` re-checks it offline. A real signed completion fixture (`nearai-verified-sample.json`) is captured with `npm run capture:fixture` once a key is available — see [Status](#status).
+Two real captures let anyone re-check this offline with `npm run verify:fixture` (no key, no network): `web/fixtures/nearai-attestation-sample.json` (an attestation report) and `web/fixtures/nearai-verified-sample.json` (a signed completion for the fictional deepfake scenario, with its preflight attestation, exact request/response bytes and signature; `signature_kind: provider_tee`). The script also shows that flipping one response byte or swapping the signing address makes verification fail.
+
+What lands on-chain for a verified check (request #10 on testnet): `risk: High`, eight flag categories, `evidence_hash`, `model`, `chat_id`, `signing_address 0xfdbd…8ddf`, `signature_verified: true` — and no message text.
 
 If the AI call fails, times out (15 s) or returns invalid JSON, the risk is raised to at least **medium** and the UI says "NEAR AI unavailable". Without a key the app runs on rules only and says so.
 
@@ -291,7 +293,7 @@ Third-party libraries: Rust — `near-sdk`, `near-contract-standards` (5.27.0), 
 | Item | Status |
 |---|---|
 | Contracts + tests T1–T16 | ✅ done, green in `verify:all` |
-| Analyzer, TEE verification, evidence | ✅ done; real **signed** fixture pending a NEAR AI key |
+| Analyzer, TEE verification, evidence | ✅ live on NEAR AI Cloud: scam → high, routine → low, injection → high, all `verified`; real signed fixture committed |
 | Testnet deployment + demo scripts | ✅ deployed; `demo:scam`, `demo:legit`, `demo:attack`, `demo:reset` pass on testnet |
 | Web app incl. guided demo | ✅ driven end to end in a browser against testnet (all flows, 6/6 attacks blocked); hosted deploy pending |
 | Wallet flow | built; not yet tested with a real testnet wallet |
