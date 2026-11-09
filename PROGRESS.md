@@ -85,7 +85,15 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 
 - After PR #2 deployed, the live attack panel still showed "NOT blocked" — but the errors were *contract* panics ("Requires attached deposit…", "account doesn't have enough balance", "Account … does not exist"), which a function-call key could never reach. Conclusion: on Vercel, `DEMO_FINANCE_FCK_SECRET` holds Tolu's **full-access** key (likely `DEMO_FINANCE_SECRET` pasted by mistake). Nothing moved, but the hosted demo contradicted G4 and kept a full-access key on the server.
 - Fix asked of Greg: replace `DEMO_FINANCE_FCK_SECRET` in Vercel with the value of that exact line from `.env.local`, then redeploy.
-- Defence in depth (branch, not yet merged): the server now looks up Tolu's demo key on-chain and refuses demo mode unless it is a function-call key scoped to the vault's `request_payout`/`cancel_payout`; `/api/health` reports `finance_key` (kind only) and `demo_error`. Verified locally against testnet with both the correct key and the full-access key.
+- Defence in depth (merged in PR #3): the server now looks up Tolu's demo key on-chain and refuses demo mode unless it is a function-call key scoped to the vault's `request_payout`/`cancel_payout`; `/api/health` reports `finance_key` (kind only) and `demo_error`. Verified locally against testnet with both the correct key and the full-access key.
+- **Resolved (2026-11-09):** Greg replaced the Vercel variable and redeployed. Live `/api/health` reports `demo_mode: true`, `finance_key: "function-call"`, `ai_enabled: true`. A browser run of the hosted site completed all three scenarios; the attack panel showed 5/5 attempts blocked by NEAR (ReceiverMismatch, DepositWithFunctionCall ×2, MethodNameMismatch, RequiresFullAccess). The sixth attempt (Tolu's full-access key) is skipped on purpose because that key is not on Vercel.
+
+## Judge dry run (2026-11-09)
+
+- Fresh clone of `main` with an empty `$HOME` (no `.env.local`, no NEAR credentials, no npm cache): `npm install` 22 s; `npm run verify:all` ✅ all checks passed in 7 m 51 s on 4 cores (clippy 130 s, sandbox tests 315 s). Counts: 25 unit + 16 sandbox + 52 vitest.
+- Hosted demo driven by a new visitor following the README click path literally: every label exists, every step passed in 59 s total (AI check 9 s, verified), 5/5 attacks blocked, no console errors, all API calls 200. About 7 rate-limited actions per full run (limit 20/h).
+- README fixes: test count 47 → 52; heading no longer promises "5 minutes" (real cold-run time stated); `cargo-near` pinned to 0.23.0 to match CI (also in `test.sh`'s hint).
+- Each full demo run moves 2,200 tUSD to vendor/supplier. Ran `demo:reset` afterwards → vault back to 100,000 tUSD. Run it again before judging starts. Gas is ample: Ada 0.39 NEAR, Tolu's key allowance 1.98 NEAR left.
 
 ## Testnet notes
 
@@ -102,3 +110,4 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 ## Session log
 
 - **2026-11-08 (session 1)** — P0–P1 done; P2 scripts + P3 analyzer + P4 web + P5 docs drafted and verified locally (sandbox). Then Greg approved testnet: P2 done on testnet; README updated with real testnet output and contract ids.
+- **2026-11-09 (session 2)** — CI fixed; PR #1 merged; Greg deployed to Vercel; UI redesign (PR #2) and on-chain demo-key guard (PR #3) merged; live site verified end to end.
