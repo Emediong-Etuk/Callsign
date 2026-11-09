@@ -13,6 +13,7 @@ Form: https://nearhackathon.com/#apply (or the JSON API described in HACKATHON.m
 | Repository | https://github.com/Emediong-Etuk/Callsign (must be public) |
 | Demo post | _link to your X post_ |
 | Description | below — **1,211 characters** (re-count with `node web/scripts/count-description.mjs`) |
+| Hosted demo | https://callsign-nine.vercel.app (put it in the README and the X post — **not** in the form's website field) |
 | Website | **Leave empty / don't send.** HACKATHON.md says `website` is a spam trap: any value rejects the submission. |
 | Consent | read and agree: "I agree that the organizers may use these details to review our submission and contact us about this hackathon." |
 
@@ -39,7 +40,7 @@ Testnet only. Proven by 16 sandbox tests and a one-command check (npm run verify
 > NEAR makes it work: function-call keys that can't move money, 1-yocto wallet confirmations, and private TEE AI on NEAR AI Cloud.
 >
 > Built at NEAR HACKATHON @NEARProtocol #NEARHackathon
-> Demo: <link> · Code: https://github.com/Emediong-Etuk/Callsign
+> Demo: https://callsign-nine.vercel.app · Code: https://github.com/Emediong-Etuk/Callsign
 > Finance teams: who should have to confirm a payment like this?
 
 (Optional extra tags from the guide: @NearLegion @NearBuilders.)
@@ -48,12 +49,12 @@ Testnet only. Proven by 16 sandbox tests and a one-command check (npm run verify
 
 1. A deepfake can copy your CEO's face and voice. It can't sign with her private key. Callsign: a payment firewall against deepfake scams. Built at NEAR HACKATHON @NEARProtocol #NEARHackathon 🎥 [video]
 2. How: funds sit in a NEAR vault. New payee or big amount → held until the claimed sender confirms from their own account (1 yoctoNEAR = wallet signature). No answer → it expires. "I didn't send this" → receiver flagged on-chain.
-3. Staff keys are NEAR function-call keys: even a hacked laptop can't move money. A TEE model on NEAR AI Cloud flags pressure tactics; only categories + a hash go on-chain. Try it: <link> · Code: https://github.com/Emediong-Etuk/Callsign. Who in your company should confirm payments like this?
+3. Staff keys are NEAR function-call keys: even a hacked laptop can't move money. A TEE model on NEAR AI Cloud flags pressure tactics; only categories + a hash go on-chain. Try it: https://callsign-nine.vercel.app · Code: https://github.com/Emediong-Etuk/Callsign. Who in your company should confirm payments like this?
 
 ## Your manual checklist
 
 - [ ] Repo made public (ask the agent to check `git log` for secrets first)
-- [ ] Hosted demo live and healthy through 2026-11-25
+- [x] Hosted demo live (https://callsign-nine.vercel.app) — keep it up through 2026-11-25
 - [ ] Video recorded per `docs/DEMO_SCRIPT.md` (fictional people only)
 - [ ] X post published with the video; link copied
 - [ ] Form submitted with your **mainnet** prize account, website field empty

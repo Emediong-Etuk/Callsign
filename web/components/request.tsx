@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Check, Fingerprint, ShieldAlert, X } from "lucide-react";
 import type { MemberView, RequestView } from "@/lib/near/types";
 import { FLAG_LABELS, isFlagType } from "@/lib/flags";
-import { AccountId, Amount, Button, Card, NearNote, RiskBadge, StatusChip, TxLink } from "./ui";
+import { formatTusd } from "@/lib/near/format";
+import { AccountId, NearNote, RiskBadge, StatusChip, TxLink } from "./ui";
 
 export function memberName(members: MemberView[], id: string): string | null {
   return members.find((m) => m.account_id === id)?.display_name ?? null;
@@ -68,16 +70,17 @@ export function Timeline({
       tone: s === "Failed" ? "bad" : "ok",
     });
   }
-  const dot = { ok: "bg-ok", held: "bg-held-line", bad: "bg-bad", neutral: "bg-muted" };
+  const dot = { ok: "bg-ok-line", held: "bg-held-line", bad: "bg-bad-line", neutral: "bg-subtle" };
   return (
-    <ol className="space-y-2" aria-label="Request timeline">
+    <ol className="relative space-y-4 pl-1" aria-label="Request timeline">
+      <span className="absolute bottom-2 left-[9px] top-2 w-px bg-line" aria-hidden="true" />
       {steps.map((st) => (
-        <li key={st.label} className="flex items-center gap-2 text-sm">
+        <li key={st.label} className="relative flex items-center gap-3 text-sm">
           <span
             aria-hidden="true"
-            className={`h-3 w-3 rounded-full ${st.done ? dot[st.tone] : "border-2 border-line bg-paper"}`}
+            className={`relative z-10 h-[18px] w-[18px] rounded-full border-4 border-paper ${st.done ? dot[st.tone] : "bg-line"}`}
           />
-          <span className={st.done ? "" : "text-muted"}>{st.label}</span>
+          <span className={st.done ? "font-medium" : "text-subtle"}>{st.label}</span>
           {st.tx ? <TxLink hash={st.tx} label="tx" /> : null}
         </li>
       ))}
@@ -97,6 +100,7 @@ export function ConfirmCard({
   onConfirm,
   onReject,
   confirmNote,
+  compact = false,
 }: {
   request: RequestView;
   members: MemberView[];
@@ -105,97 +109,129 @@ export function ConfirmCard({
   onConfirm: () => void;
   onReject: () => void;
   confirmNote?: string;
+  compact?: boolean;
 }) {
   const requester = memberName(members, request.requester) ?? request.requester;
   const principal = memberName(members, request.claimed_principal) ?? request.claimed_principal;
   const pending = request.effective_status === "Pending";
   const isPrincipal = viewerId === request.claimed_principal;
   const flags = (request.evidence?.flags ?? []).filter(isFlagType);
+  const high = request.evidence?.risk === "High";
+  const ring =
+    request.effective_status === "Executed"
+      ? "ring-ok-line/50"
+      : request.effective_status === "Rejected"
+        ? "ring-bad-line/50"
+        : pending
+          ? "ring-held-line/50"
+          : "ring-line";
+
   return (
-    <Card
-      tone={
-        pending
-          ? "held"
-          : request.effective_status === "Executed"
-            ? "ok"
-            : request.effective_status === "Rejected"
-              ? "bad"
-              : "neutral"
-      }
-      className="mx-auto max-w-md"
+    <section
+      className={`mx-auto overflow-hidden rounded-3xl bg-paper shadow-xl shadow-ink/5 ring-1 ${ring} ${compact ? "w-full" : "max-w-md"}`}
     >
-      <div className="flex items-center justify-between gap-2">
-        <StatusChip status={request.effective_status} scam={request.reported_as_scam} />
-        {pending ? <Countdown expiresNs={request.expires_at_ns} /> : null}
-      </div>
-      <h2 className="mt-4 text-xl font-semibold leading-snug">
-        Did you ask {requester} to pay <Amount base={request.amount} /> to{" "}
-        <span className="mono text-lg">{request.receiver_id}</span>?
-      </h2>
-      <dl className="mt-4 space-y-2 text-sm">
-        <div>
-          <dt className="text-muted">Receiver (full account)</dt>
-          <dd>
-            <AccountId id={request.receiver_id} />
-          </dd>
-        </div>
-        <div>
-          <dt className="text-muted">Requested by</dt>
-          <dd>
-            <AccountId id={request.requester} name={memberName(members, request.requester)} />
-          </dd>
-        </div>
-        <div>
-          <dt className="text-muted">Claims to come from</dt>
-          <dd>
-            <AccountId id={request.claimed_principal} name={principal} />
-          </dd>
-        </div>
-        {request.memo ? (
-          <div>
-            <dt className="text-muted">Memo (public)</dt>
-            <dd>{request.memo}</dd>
-          </div>
-        ) : null}
-        <div>
-          <dt className="text-muted">Red-flag check</dt>
-          <dd className="flex flex-wrap items-center gap-1.5">
-            <RiskBadge risk={request.evidence?.risk ?? "Unknown"} />
-            {flags.map((f) => (
-              <span key={f} className="rounded bg-wash px-1.5 py-0.5 text-xs">
-                {FLAG_LABELS[f]}
-              </span>
-            ))}
-            {request.evidence?.signature_verified ? (
-              <span className="text-xs text-ok">TEE-verified AI</span>
-            ) : null}
-          </dd>
-        </div>
-      </dl>
-      {pending ? (
-        <div className="mt-5 grid gap-2">
-          {!isPrincipal ? (
-            <p className="rounded-lg bg-wash px-3 py-2 text-sm text-muted">
-              Only {principal} (<span className="mono">{request.claimed_principal}</span>) can
-              answer this.{" "}
-              {viewerId ? `You're signed in as ${viewerId}.` : "Sign in with that account."}
-            </p>
-          ) : null}
-          <Button tone="ok" onClick={onConfirm} disabled={busy || !isPrincipal}>
-            Yes, I asked for this — release
-          </Button>
-          <Button tone="bad" onClick={onReject} disabled={busy || !isPrincipal}>
-            No, I didn’t send this — block and report
-          </Button>
-          {confirmNote ? <p className="text-xs text-muted">{confirmNote}</p> : null}
+      {high && pending ? (
+        <div className="flex items-center gap-2 bg-bad px-4 py-2 text-xs font-semibold text-white">
+          <ShieldAlert size={14} aria-hidden="true" /> High-risk request — check carefully
         </div>
       ) : null}
-      <NearNote title="a wallet-signed confirmation">
-        Releasing calls <code>confirm_payout</code> with exactly 1 yoctoNEAR attached. NEAR’s
-        limited function-call keys can’t attach deposits, so only a full-access key — the
-        principal’s own wallet — can sign it. A deepfake can copy a voice; it can’t produce that
-        signature.
-      </NearNote>
-    </Card>
+      <div className={compact ? "p-4" : "p-6"}>
+        <div className="flex items-center justify-between gap-2">
+          <StatusChip status={request.effective_status} scam={request.reported_as_scam} />
+          {pending ? <Countdown expiresNs={request.expires_at_ns} /> : null}
+        </div>
+
+        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-subtle">
+          {requester} is asking on your behalf
+        </p>
+        <h2
+          className={`mt-1 font-semibold leading-snug tracking-tight ${compact ? "text-lg" : "text-2xl"}`}
+        >
+          Did you ask {requester.split(" ")[0]} to pay{" "}
+          <span className="whitespace-nowrap">{formatTusd(request.amount)}</span> to{" "}
+          <span className="mt-1.5 inline-block max-w-full rounded-lg bg-held-bg px-2 py-0.5 font-mono text-[0.8em] [overflow-wrap:anywhere] text-ink">
+            {request.receiver_id}
+          </span>
+          ?
+        </h2>
+
+        <dl className="mt-5 grid gap-3 rounded-2xl bg-wash p-4 text-sm">
+          <Row label="Receiver (full account)">
+            <AccountId id={request.receiver_id} />
+          </Row>
+          <Row label="Requested by">
+            <AccountId id={request.requester} name={memberName(members, request.requester)} />
+          </Row>
+          <Row label="Claims to come from">
+            <AccountId id={request.claimed_principal} name={principal} />
+          </Row>
+          {request.memo ? <Row label="Memo (public)">{request.memo}</Row> : null}
+          <Row label="Red-flag check">
+            <span className="flex flex-wrap items-center gap-1.5">
+              <RiskBadge risk={request.evidence?.risk ?? "Unknown"} />
+              {flags.map((f) => (
+                <span
+                  key={f}
+                  className="rounded-md bg-paper px-1.5 py-0.5 text-xs ring-1 ring-line"
+                >
+                  {FLAG_LABELS[f]}
+                </span>
+              ))}
+              {request.evidence?.signature_verified ? (
+                <span className="text-xs font-medium text-ok">✓ TEE-verified AI</span>
+              ) : null}
+            </span>
+          </Row>
+        </dl>
+
+        {pending ? (
+          <div className="mt-5 grid gap-2.5">
+            {!isPrincipal ? (
+              <p className="rounded-xl bg-wash px-3 py-2 text-sm text-muted">
+                Only {principal} (<span className="mono">{request.claimed_principal}</span>) can
+                answer this.{" "}
+                {viewerId ? `You're signed in as ${viewerId}.` : "Sign in with that account."}
+              </p>
+            ) : null}
+            <button
+              onClick={onReject}
+              disabled={busy || !isPrincipal}
+              className="flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-bad px-4 font-semibold text-white shadow-lg shadow-bad/25 transition hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+            >
+              <X size={18} aria-hidden="true" /> No, I didn’t send this — block and report
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={busy || !isPrincipal}
+              className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-ok-line/60 bg-ok-bg px-4 font-semibold text-ok transition hover:bg-ok-bg/70 active:scale-[0.98] disabled:opacity-50"
+            >
+              <Check size={18} aria-hidden="true" /> Yes, I asked for this — release
+            </button>
+            <p className="flex items-center justify-center gap-1.5 text-xs text-subtle">
+              <Fingerprint size={13} aria-hidden="true" /> Releasing needs a signature from your own
+              NEAR account
+            </p>
+            {confirmNote ? <p className="text-center text-xs text-subtle">{confirmNote}</p> : null}
+          </div>
+        ) : null}
+        {!compact ? (
+          <NearNote title="a wallet-signed confirmation">
+            Releasing calls <code>confirm_payout</code> with exactly 1 yoctoNEAR attached. NEAR’s
+            limited function-call keys can’t attach deposits, so only a full-access key — the
+            principal’s own wallet — can sign it. A deepfake can copy a voice; it can’t produce that
+            signature.
+          </NearNote>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <dt className="text-xs text-subtle">{label}</dt>
+      <dd className="mt-0.5">{children}</dd>
+    </div>
   );
 }

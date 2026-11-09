@@ -4,6 +4,7 @@
  */
 import { Account, FailoverRpcProvider, JsonRpcProvider, type KeyPairString } from "near-api-js";
 import { CALL_GAS, rpcUrls } from "./config";
+import { describeTxError } from "./protocol-errors";
 
 let provider: FailoverRpcProvider | null = null;
 export function getProvider(): FailoverRpcProvider {
@@ -97,11 +98,7 @@ export async function call(
     return decode(res as unknown as Outcome);
   } catch (e) {
     // Protocol-level rejections (e.g. a function-call key misuse) never reach the chain.
-    const err = e as Error & { type?: string; cause?: unknown };
-    const detail = [err.name, err.type, err.message, err.cause ? JSON.stringify(err.cause) : ""]
-      .filter(Boolean)
-      .join(" ");
-    return { ok: false, hash: null, value: null, logs: [], error: detail || String(e) };
+    return { ok: false, hash: null, value: null, logs: [], error: describeTxError(e) || String(e) };
   }
 }
 
@@ -128,13 +125,6 @@ export async function transferNear(
     const res = await account.transfer({ receiverId, amount: yocto });
     return decode(res as unknown as Outcome);
   } catch (e) {
-    const err = e as Error & { type?: string };
-    return {
-      ok: false,
-      hash: null,
-      value: null,
-      logs: [],
-      error: [err.name, err.type, err.message].filter(Boolean).join(" "),
-    };
+    return { ok: false, hash: null, value: null, logs: [], error: describeTxError(e) || String(e) };
   }
 }

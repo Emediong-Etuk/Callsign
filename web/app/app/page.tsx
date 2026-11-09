@@ -44,7 +44,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold">Vault dashboard</h1>
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Vault dashboard</h1>
         <WalletButton />
       </div>
       {accountId && !me ? (
