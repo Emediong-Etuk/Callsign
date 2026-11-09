@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 const body = z.object({ id: z.string().regex(/^\d{1,19}$/) });
 
 export async function POST(req: Request) {
-  const gate = demoContext();
+  const gate = await demoContext();
   if (!gate.ok) return json({ error: gate.error }, gate.status);
   const limit = rateLimit(`demo:${clientIp(req)}`, 20);
   if (!limit.ok)

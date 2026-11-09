@@ -81,6 +81,12 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 - **Bug found and fixed while testing the production build:** the attack panel labelled every protocol refusal "NOT blocked" because near-api-js names errors after their class, and production minification renames classes (`oI`). This affected the live site (scripts and dev server don't minify, so earlier tests passed). Fix: `lib/near/protocol-errors.ts` classifies refusals with `instanceof` (classes are shared via `near-api-js/rpc-errors`) plus NEAR's stable messages; regression test `tests/protocol-errors.test.ts` simulates minified names. Re-verified on a production build: 6/6 blocked.
 - `npm run dev` now uses `next dev --webpack`: Turbopack's dev server got stuck in a rebuild→reload loop in this container (production builds still use Turbopack and are unaffected).
 
+## Live-site key misconfiguration (2026-11-09)
+
+- After PR #2 deployed, the live attack panel still showed "NOT blocked" — but the errors were *contract* panics ("Requires attached deposit…", "account doesn't have enough balance", "Account … does not exist"), which a function-call key could never reach. Conclusion: on Vercel, `DEMO_FINANCE_FCK_SECRET` holds Tolu's **full-access** key (likely `DEMO_FINANCE_SECRET` pasted by mistake). Nothing moved, but the hosted demo contradicted G4 and kept a full-access key on the server.
+- Fix asked of Greg: replace `DEMO_FINANCE_FCK_SECRET` in Vercel with the value of that exact line from `.env.local`, then redeploy.
+- Defence in depth (branch, not yet merged): the server now looks up Tolu's demo key on-chain and refuses demo mode unless it is a function-call key scoped to the vault's `request_payout`/`cancel_payout`; `/api/health` reports `finance_key` (kind only) and `demo_error`. Verified locally against testnet with both the correct key and the full-access key.
+
 ## Testnet notes
 
 - Master balance after setup: ~2.14 NEAR (faucet gave 10; sub-accounts funded per `setup-testnet.ts`).

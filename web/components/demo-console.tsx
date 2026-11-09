@@ -37,7 +37,13 @@ import {
   TxLink,
 } from "./ui";
 
-type Health = { demo_mode: boolean; vault: string | null; ai_enabled: boolean; ai_model: string };
+type Health = {
+  demo_mode: boolean;
+  demo_error?: string | null;
+  vault: string | null;
+  ai_enabled: boolean;
+  ai_model: string;
+};
 type StepResult = {
   ok: boolean;
   txHash: string | null;
@@ -231,6 +237,11 @@ export function DemoConsole() {
     return (
       <Card>
         <h2 className="text-lg font-semibold">The guided demo isn’t enabled on this server</h2>
+        {health.demo_error ? (
+          <div className="mt-3">
+            <ErrorBox>{health.demo_error}</ErrorBox>
+          </div>
+        ) : null}
         <p className="mt-2 text-sm text-muted">
           It needs a testnet deployment and the demo keys (see README → “Run it against testnet
           yourself”). You can still run <code>npm run verify:all</code> with no keys.

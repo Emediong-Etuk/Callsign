@@ -12,7 +12,7 @@ const body = z.union([
 ]);
 
 export async function POST(req: Request) {
-  const gate = demoContext();
+  const gate = await demoContext();
   if (!gate.ok) return json({ error: gate.error }, gate.status);
   const limit = rateLimit(`demo:${clientIp(req)}`, 20);
   if (!limit.ok)
