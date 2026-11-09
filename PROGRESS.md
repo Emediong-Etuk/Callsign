@@ -88,6 +88,13 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 - Defence in depth (merged in PR #3): the server now looks up Tolu's demo key on-chain and refuses demo mode unless it is a function-call key scoped to the vault's `request_payout`/`cancel_payout`; `/api/health` reports `finance_key` (kind only) and `demo_error`. Verified locally against testnet with both the correct key and the full-access key.
 - **Resolved (2026-11-09):** Greg replaced the Vercel variable and redeployed. Live `/api/health` reports `demo_mode: true`, `finance_key: "function-call"`, `ai_enabled: true`. A browser run of the hosted site completed all three scenarios; the attack panel showed 5/5 attempts blocked by NEAR (ReceiverMismatch, DepositWithFunctionCall ×2, MethodNameMismatch, RequiresFullAccess). The sixth attempt (Tolu's full-access key) is skipped on purpose because that key is not on Vercel.
 
+## Judge dry run (2026-11-09)
+
+- Fresh clone of `main` with an empty `$HOME` (no `.env.local`, no NEAR credentials, no npm cache): `npm install` 22 s; `npm run verify:all` ✅ all checks passed in 7 m 51 s on 4 cores (clippy 130 s, sandbox tests 315 s). Counts: 25 unit + 16 sandbox + 52 vitest.
+- Hosted demo driven by a new visitor following the README click path literally: every label exists, every step passed in 59 s total (AI check 9 s, verified), 5/5 attacks blocked, no console errors, all API calls 200. About 7 rate-limited actions per full run (limit 20/h).
+- README fixes: test count 47 → 52; heading no longer promises "5 minutes" (real cold-run time stated); `cargo-near` pinned to 0.23.0 to match CI (also in `test.sh`'s hint).
+- Each full demo run moves 2,200 tUSD to vendor/supplier. Ran `demo:reset` afterwards → vault back to 100,000 tUSD. Run it again before judging starts. Gas is ample: Ada 0.39 NEAR, Tolu's key allowance 1.98 NEAR left.
+
 ## Testnet notes
 
 - Master balance after setup: ~2.14 NEAR (faucet gave 10; sub-accounts funded per `setup-testnet.ts`).

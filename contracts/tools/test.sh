@@ -9,7 +9,7 @@ cd "$(dirname "$0")/.."
 
 # near-workspaces compiles both contracts by calling the `cargo near` CLI.
 if ! cargo near --version >/dev/null 2>&1; then
-  echo "error: cargo-near is not installed. Install it with: cargo install --locked cargo-near" >&2
+  echo "error: cargo-near is not installed. Install it with: cargo install --locked cargo-near@0.23.0" >&2
   echo "       (see README → For judges → Prerequisites)" >&2
   exit 1
 fi

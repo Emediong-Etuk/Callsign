@@ -6,7 +6,7 @@ Callsign is a payment firewall against deepfake impersonation scams, built on NE
 
 **Tracks:** `security` AI Security & Defense (primary) · `privacy` Privacy & Private AI (secondary)
 
-**Hosted demo:** **<https://callsign-nine.vercel.app>** (guided demo at [`/demo`](https://callsign-nine.vercel.app/demo), no wallet needed). **Judges with no keys:** run [`npm run verify:all`](#for-judges-verify-in-5-minutes-no-keys-needed).
+**Hosted demo:** **<https://callsign-nine.vercel.app>** (guided demo at [`/demo`](https://callsign-nine.vercel.app/demo), no wallet needed). **Judges with no keys:** run [`npm run verify:all`](#for-judges-verify-it-yourself-no-keys-needed).
 
 ![Callsign landing page: an animated deepfake voice note is scanned, held, and blocked when the real CEO says no](docs/img/hero.png)
 
@@ -62,12 +62,12 @@ sequenceDiagram
 | **Fast finality** | Holds cost minutes, not days: the principal's answer lands in seconds. |
 | **NEAR AI Cloud (TEE)** | The red-flag model runs in a Confidential TEE and signs its answer; the app checks the signature against the model's attestation. Only categories and a hash go on-chain. |
 
-## For judges: verify in 5 minutes (no keys needed)
+## For judges: verify it yourself (no keys needed)
 
 Prerequisites: **Node 20.19+** (tested on 22), **Rust via rustup** (the pinned 1.86.0 toolchain and the `wasm32-unknown-unknown` target install automatically from `contracts/rust-toolchain.toml`), **`cargo-near`** (the sandbox tests compile the contracts with it), a C compiler, and on Linux `libudev-dev` + `pkg-config`. No wallet, no API key, no testnet account.
 
 ```bash
-cargo install --locked cargo-near
+cargo install --locked cargo-near@0.23.0
 ```
 
 ```bash
@@ -82,7 +82,7 @@ npm install
 npm run verify:all
 ```
 
-It runs Rust fmt + clippy, 25 contract unit tests and the 16 sandbox integration tests (T1–T16, a real local NEAR node), the web typecheck, lint, 47 analyzer/verification tests, an offline re-check of a real signed NEAR AI response and its attestation, and the secret scan. The first run downloads crates and the NEAR sandbox binary (a few minutes). Expected ending:
+It runs Rust fmt + clippy, 25 contract unit tests and the 16 sandbox integration tests (T1–T16, a real local NEAR node), the web typecheck, lint, 52 analyzer/verification tests, an offline re-check of a real signed NEAR AI response and its attestation, and the secret scan. The first run downloads crates and the NEAR sandbox binary and compiles everything: about 8 minutes from a fresh clone on a 4-core machine (re-runs take about 2). Expected ending (timings from a warm re-run):
 
 ```
 ══════════════ verify:all summary ══════════════
