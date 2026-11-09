@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
+import { LogoMark, REPO } from "@/components/brand";
+import { Nav } from "@/components/nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,63 +11,78 @@ export const metadata: Metadata = {
   description:
     "A deepfake can copy a face and a voice. It can't sign with a private key. Callsign holds risky payouts until the real person confirms from their own NEAR account.",
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#1e3a5f" };
-
-const REPO = "https://github.com/Emediong-Etuk/Callsign";
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#070b17" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 bg-white px-3 py-2"
+          className="sr-only z-[60] rounded-lg bg-white px-3 py-2 focus:not-sr-only focus:fixed focus:left-2 focus:top-2"
         >
           Skip to content
         </a>
-        <header className="border-b border-line bg-paper">
-          <nav
-            className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3"
-            aria-label="Main"
-          >
-            <Link href="/" className="flex items-center gap-2 font-semibold text-brand">
-              <svg
-                aria-hidden="true"
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 3l7 3v6c0 4.4-3 8-7 9-4-1-7-4.6-7-9V6l7-3z" />
-                <path d="M9 12l2 2 4-4" />
-              </svg>
-              Callsign
-            </Link>
-            <Link href="/demo" className="text-sm text-muted hover:text-ink">
-              Guided demo
-            </Link>
-            <Link href="/app" className="text-sm text-muted hover:text-ink">
-              Wallet app
-            </Link>
-            <Link href="/admin" className="text-sm text-muted hover:text-ink">
-              Vault settings
-            </Link>
-            <a href={REPO} className="ml-auto text-sm text-muted hover:text-ink">
-              GitHub
-            </a>
-          </nav>
-        </header>
-        <main id="main" className="mx-auto max-w-5xl px-4 py-8">
-          {children}
-        </main>
-        <footer className="mx-auto max-w-5xl px-4 pb-10 pt-4 text-xs text-muted">
-          Built at NEAR HACKATHON 2026 · Testnet only · Demo company, people and the tUSD token are
-          fictional ·{" "}
-          <a className="underline" href={REPO}>
-            Source (MIT)
-          </a>
+        <Nav />
+        <main id="main">{children}</main>
+        <footer className="border-t border-line bg-paper">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-[2fr_1fr_1fr]">
+            <div>
+              <div className="flex items-center gap-2 font-semibold">
+                <LogoMark size={24} /> Callsign
+              </div>
+              <p className="mt-3 max-w-sm text-sm text-muted">
+                A deepfake can copy a face and a voice. It can’t sign with a private key. Built at
+                NEAR HACKATHON 2026.
+              </p>
+              <p className="mt-3 text-xs text-subtle">
+                Testnet only · Acme Ltd, its people and the tUSD token are fictional · MIT licensed
+              </p>
+            </div>
+            <div className="text-sm">
+              <div className="font-semibold">Product</div>
+              <ul className="mt-3 space-y-2 text-muted">
+                <li>
+                  <Link className="hover:text-ink" href="/demo">
+                    Guided demo
+                  </Link>
+                </li>
+                <li>
+                  <Link className="hover:text-ink" href="/app">
+                    Wallet app
+                  </Link>
+                </li>
+                <li>
+                  <Link className="hover:text-ink" href="/admin">
+                    Vault settings
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="text-sm">
+              <div className="font-semibold">Verify it</div>
+              <ul className="mt-3 space-y-2 text-muted">
+                <li>
+                  <a className="hover:text-ink" href={REPO}>
+                    Source on GitHub
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="hover:text-ink"
+                    href="https://testnet.nearblocks.io/address/vault.callsign-fdym.testnet"
+                  >
+                    Vault on nearblocks
+                  </a>
+                </li>
+                <li>
+                  <a className="hover:text-ink" href="https://cloud.near.ai/verify">
+                    NEAR AI Verification Center
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </footer>
       </body>
     </html>

@@ -74,6 +74,13 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 
 - 2026-11-08: first CI run on PR #1 failed only the contract sandbox tests: `near_workspaces::compile_project` (cargo-near-build 0.11.5) shells out to the **`cargo near` CLI**, which the runner lacked. My local fresh-clone check passed only because cargo-near was installed here. Fixes: CI installs `cargo-near@0.23.0` from crates.io (not the curl installer script, per rule 9); `contracts/tools/test.sh` fails fast with an install hint; README prerequisites now list cargo-near. GitHub also warns that actions/checkout@v4 and setup-node@v4 run on Node 20 (deprecated) — warning only.
 
+## Hosted demo + redesign (2026-11-09)
+
+- Greg deployed to Vercel himself: **https://callsign-nine.vercel.app** (root dir `web`). Verified live: `/api/health` shows testnet, demo mode, AI enabled, no secrets; the deepfake scenario ran end to end with "NEAR AI (TEE) · signature verified".
+- Greg asked for a more modern, interactive frontend. Redesign keeps the brief's tone (calm fraud desk, not crypto casino), the amber/green/red signal system and accessibility (focus rings, reduced-motion support): Geist fonts, glass sticky nav with live-testnet indicator, dark animated hero with an interactive scam simulator (visitor can answer as Ada), count-up stats, scroll reveals, bento "What NEAR enables" grid with cursor spotlight, terminal-style attack teaser; demo page with scenario picker cards, 5-step progress tracker, Ada's view in a phone frame, toast notifications with explorer links, attack results revealed one by one. New deps (pinned to releases ≥2 weeks old): geist 1.8.2, lucide-react 1.61.0, motion 14.6.0.
+- **Bug found and fixed while testing the production build:** the attack panel labelled every protocol refusal "NOT blocked" because near-api-js names errors after their class, and production minification renames classes (`oI`). This affected the live site (scripts and dev server don't minify, so earlier tests passed). Fix: `lib/near/protocol-errors.ts` classifies refusals with `instanceof` (classes are shared via `near-api-js/rpc-errors`) plus NEAR's stable messages; regression test `tests/protocol-errors.test.ts` simulates minified names. Re-verified on a production build: 6/6 blocked.
+- `npm run dev` now uses `next dev --webpack`: Turbopack's dev server got stuck in a rebuild→reload loop in this container (production builds still use Turbopack and are unaffected).
+
 ## Testnet notes
 
 - Master balance after setup: ~2.14 NEAR (faucet gave 10; sub-accounts funded per `setup-testnet.ts`).

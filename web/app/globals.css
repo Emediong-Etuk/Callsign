@@ -1,40 +1,251 @@
 @import "tailwindcss";
 
-/* One signal system: amber = held, green = released, red = blocked. Everything else neutral. */
+/*
+ * Callsign design system.
+ * Calm, modern fintech-security: deep navy + an indigo→cyan "signature" accent.
+ * One signal system everywhere: amber = held, green = released, red = blocked.
+ */
 @theme {
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  --color-ink: #0f172a;
-  --color-muted: #475569;
-  --color-line: #e2e8f0;
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-ink: #0b1220;
+  --color-muted: #4a5568;
+  --color-subtle: #64748b;
+  --color-line: #e5e7ef;
   --color-paper: #ffffff;
-  --color-wash: #f8fafc;
-  --color-brand: #1e3a5f;
+  --color-wash: #f6f7fb;
+  --color-night: #070b17;
+  --color-night-2: #0e1530;
+
+  --color-brand: #4f46e5;
+  --color-brand-2: #06b6d4;
+  --color-brand-ink: #312e81;
+
   --color-held: #92400e;
   --color-held-bg: #fef3c7;
   --color-held-line: #f59e0b;
-  --color-ok: #065f46;
+  --color-ok: #047857;
   --color-ok-bg: #d1fae5;
   --color-ok-line: #10b981;
-  --color-bad: #991b1b;
+  --color-bad: #b91c1c;
   --color-bad-bg: #fee2e2;
   --color-bad-line: #ef4444;
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+  --animate-scan: scan 1.6s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 1.8s ease-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes scan {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(400%);
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgb(16 185 129 / 0.55);
+    }
+    100% {
+      box-shadow: 0 0 0 10px rgb(16 185 129 / 0);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 0% 50%;
+    }
+    to {
+      background-position: 200% 50%;
+    }
+  }
 }
 
 html {
   color-scheme: light;
+  scroll-behavior: smooth;
 }
 body {
   background: var(--color-wash);
   color: var(--color-ink);
+  font-feature-settings: "ss01", "cv11";
 }
 :focus-visible {
-  outline: 3px solid #2563eb;
+  outline: 3px solid #6366f1;
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
+::selection {
+  background: rgb(99 102 241 / 0.2);
+}
+
 .mono {
   font-family: var(--font-mono);
   word-break: break-all;
+}
+
+/* Gradient text for key words in headlines. */
+.text-gradient {
+  background: linear-gradient(100deg, #a5b4fc 0%, #67e8f9 45%, #a5b4fc 90%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+.text-gradient-dark {
+  background: linear-gradient(100deg, #4f46e5, #0891b2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Dark hero band: night gradient + faint grid + glow blobs. */
+.bg-hero {
+  background:
+    radial-gradient(60rem 30rem at 15% -10%, rgb(79 70 229 / 0.45), transparent 60%),
+    radial-gradient(50rem 30rem at 95% 10%, rgb(6 182 212 / 0.25), transparent 60%),
+    linear-gradient(180deg, #070b17 0%, #0b1330 100%);
+}
+.bg-grid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 75%);
+}
+.bg-dots {
+  background-image: radial-gradient(rgb(15 23 42 / 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Glass surfaces. */
+.glass {
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+}
+.glass-dark {
+  background: rgb(255 255 255 / 0.06);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Cursor spotlight for bento tiles (--mx/--my set from JS). */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    22rem circle at var(--mx, 50%) var(--my, 50%),
+    rgb(99 102 241 / 0.12),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: -1;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Gradient border wrapper. */
+.gradient-border {
+  background:
+    linear-gradient(var(--color-paper), var(--color-paper)) padding-box,
+    linear-gradient(135deg, #6366f1, #06b6d4) border-box;
+  border: 1.5px solid transparent;
+}
+
+/* Waveform bars for the "voice note". */
+.wave span {
+  display: inline-block;
+  width: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: wave 1s ease-in-out infinite;
+}
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* Reveal-on-scroll (toggled by the Reveal component). */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+.reveal .stagger {
+  opacity: 0;
+}
+.reveal.is-visible .stagger {
+  animation: var(--animate-fade-up);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .reveal .stagger {
+    opacity: 1;
+    transform: none;
+  }
 }

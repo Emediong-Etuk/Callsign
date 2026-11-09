@@ -6,9 +6,9 @@ Callsign is a payment firewall against deepfake impersonation scams, built on NE
 
 **Tracks:** `security` AI Security & Defense (primary) · `privacy` Privacy & Private AI (secondary)
 
-**Hosted demo:** _not deployed yet_ — see [Status](#status). **Judges with no keys:** run [`npm run verify:all`](#for-judges-verify-in-5-minutes-no-keys-needed).
+**Hosted demo:** **<https://callsign-nine.vercel.app>** (guided demo at [`/demo`](https://callsign-nine.vercel.app/demo), no wallet needed). **Judges with no keys:** run [`npm run verify:all`](#for-judges-verify-in-5-minutes-no-keys-needed).
 
-![The guided demo on NEAR testnet after the deepfake scenario: held, rejected, receiver flagged, retry refused](docs/img/demo-scam.png)
+![Callsign landing page: an animated deepfake voice note is scanned, held, and blocked when the real CEO says no](docs/img/hero.png)
 
 ---
 
@@ -100,7 +100,11 @@ It runs Rust fmt + clippy, 25 contract unit tests and the 16 sandbox integration
 
 > **Containers with a low open-files limit:** the sandbox node asks for 65,535 open files. If your hard limit is lower and can't be raised, `contracts/tools/test.sh` automatically builds a tiny `LD_PRELOAD` shim (`contracts/tools/fdlimit-shim.c`) that clamps the request. Nothing else changes.
 
-Then, once it's live, the hosted demo: open `/demo` → **Deepfake CEO wire** → "Tolu: check it and submit" → see **HELD** → "Switch to Ada's phone" → "No, I didn't send this" → see **Blocked & reported** → "Scammer tries again" → see **ERR_RECEIVER_FLAGGED**. Then **Run the attack** and see every attempt blocked. Every step links to the testnet transaction.
+Then the hosted demo: open <https://callsign-nine.vercel.app/demo> → **Deepfake CEO wire** is preselected → **Tolu: check it and submit** → see the red flags (with "NEAR AI (TEE) · signature verified") and **Held — awaiting confirmation** → **Ada's phone just buzzed** → **No, I didn't send this — block and report** → see **Blocked & reported** → **Scammer tries again → same wallet** → see **Refused by the vault · ERR_RECEIVER_FLAGGED**. Then pick **Routine vendor invoice** (paid instantly) and **Real new supplier** (held → Ada taps **Yes** → paid), and press **Run the attack** to see every attempt blocked. Each step links to its testnet transaction; the demo allows 20 actions per hour per visitor.
+
+| The deepfake scenario after Ada says “No” | What Ada sees on her phone |
+|---|---|
+| ![Guided demo: red flags with quotes, TEE-verified badge, held, blocked & reported, retry refused](docs/img/demo-scam.png) | ![Ada's phone: Did you ask Tolu to pay 25,000 tUSD to fastpay-…?](docs/img/ada-confirm.png) |
 
 ## Run it against testnet yourself
 
@@ -299,7 +303,7 @@ Third-party libraries: Rust — `near-sdk`, `near-contract-standards` (5.27.0), 
 | Contracts + tests T1–T16 | ✅ done, green in `verify:all` |
 | Analyzer, TEE verification, evidence | ✅ live on NEAR AI Cloud: scam → high, routine → low, injection → high, all `verified`; real signed fixture committed |
 | Testnet deployment + demo scripts | ✅ deployed; `demo:scam`, `demo:legit`, `demo:attack`, `demo:reset` pass on testnet |
-| Web app incl. guided demo | ✅ driven end to end in a browser against testnet (all flows, 6/6 attacks blocked); hosted deploy pending |
+| Web app incl. guided demo | ✅ live at <https://callsign-nine.vercel.app>; driven end to end in a browser against testnet (all flows, attacks blocked) |
 | Wallet flow | built; not yet tested with a real testnet wallet |
 
 ## Roadmap

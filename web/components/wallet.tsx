@@ -159,17 +159,18 @@ export function WalletButton() {
     return (
       <button
         onClick={() => void signIn()}
-        className="min-h-11 rounded-lg bg-brand px-4 text-sm font-semibold text-white"
+        className="min-h-11 rounded-xl bg-gradient-to-r from-brand to-brand-2 px-4 text-sm font-semibold text-white shadow-md shadow-brand/25 transition hover:brightness-110"
       >
         Connect testnet wallet
       </button>
     );
   return (
-    <span className="flex flex-wrap items-center gap-2 text-sm">
-      Signed in as <span className="mono">{accountId}</span>
+    <span className="flex flex-wrap items-center gap-2 rounded-xl border border-line bg-paper px-3 py-1.5 text-sm">
+      <span className="h-2 w-2 rounded-full bg-ok-line" aria-hidden="true" />
+      <span className="mono">{accountId}</span>
       <button
         onClick={() => void signOut()}
-        className="rounded border border-line px-2 py-1 text-xs"
+        className="rounded-lg border border-line px-2 py-1 text-xs hover:bg-wash"
       >
         Sign out
       </button>

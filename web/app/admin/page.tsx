@@ -5,14 +5,19 @@ import { AccountId, Amount, Card, ErrorBox, Spinner } from "@/components/ui";
 /** Read-only vault settings. Changes are made with the owner scripts (see README); a write UI was cut for time. */
 export default function Admin() {
   const { state, loading } = useVault();
-  if (loading) return <Spinner label="Loading vault settings…" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        <Spinner label="Loading vault settings…" />
+      </div>
+    );
   if (!state?.configured || state.error)
     return <ErrorBox>{state?.error ?? "No vault configured on this server."}</ErrorBox>;
   const p = state.config!.policy;
   const holdS = Number(BigInt(p.hold_window_ns) / 1_000_000_000n);
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Vault settings</h1>
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-10">
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Vault settings</h1>
       <p className="text-sm text-muted">
         Read-only view of the on-chain configuration. The owner (
         <span className="mono">{state.config!.owner_id}</span>) changes it with owner-only,
