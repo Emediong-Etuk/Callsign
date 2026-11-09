@@ -111,3 +111,4 @@ Source of truth: `CALLSIGN_BUILD_PROMPT.md`. This file tracks phase status, deci
 
 - **2026-11-08 (session 1)** — P0–P1 done; P2 scripts + P3 analyzer + P4 web + P5 docs drafted and verified locally (sandbox). Then Greg approved testnet: P2 done on testnet; README updated with real testnet output and contract ids.
 - **2026-11-09 (session 2)** — CI fixed; PR #1 merged; Greg deployed to Vercel; UI redesign (PR #2) and on-chain demo-key guard (PR #3) merged; live site verified end to end.
+- **2026-11-09** — Greg made the repo public (after a full-history secret scan: 21 commits, no keys; only `.env.example` ever committed; author emails are GitHub/Anthropic no-reply). Verified logged out: API reports `public`, MIT license detected, README images load, anonymous clone works.
