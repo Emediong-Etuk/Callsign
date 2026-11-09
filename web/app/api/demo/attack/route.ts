@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
-  const gate = demoContext();
+  const gate = await demoContext();
   if (!gate.ok) return json({ error: gate.error }, gate.status);
   // An attack run sends ~8 transactions, so it counts as 4 demo actions.
   for (let i = 0; i < 4; i++) {
